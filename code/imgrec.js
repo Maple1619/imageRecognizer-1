@@ -6,7 +6,9 @@ inputElement.addEventListener('change', (e) => {
 }, false);
 
 // 파일 올리면 이미지 경로 획득 -> 이미지가 로드 되면
-imgElement.onload = function () {
+imgElement.addEventListener('load', imgRec);
+imgElement.addEventListener('change', imgRec);
+function imgRec() {
     
     // 이미지 읽어오기
     let image = cv.imread(imgElement);
@@ -78,7 +80,7 @@ imgElement.onload = function () {
 
     // cv.imshow('crop', crop);
     
-    var board = makeInitalBoard(crop);
+    makeInitalBoard(crop);
     console.log(board);
 
     crop.delete();
@@ -97,45 +99,62 @@ imgElement.onload = function () {
 
 var setStoneCnt = 0;
 var beforecell;
-function setStoneOnBoard(idText) {
-    
-    // 넣을 이미지 정보 입력
-    let slimeImg = document.createElement("img");
-    let pinkbinImg = document.createElement("img");
-
-    pinkbinImg.src = '../images/block/pinkbin.png';
-    slimeImg.src = '../images/block/slime.png';
-
-    // 배열 인덱스 정보 추출
-    text = idText.match(/\d{1}_\d{1}/)[0].split('_');
+function setStoneOnBoard(isInterrupt, idText) {
+    let text = idText.match(/\d{1}_\d{1}/)[0].split('_');
     let x = text[0] - 1 ;
     let y = text[1] - 1 ;
-    let cell = document.getElementById(idText);
-    console.log(cell.classList);
-   
-    if(cell.classList[0] == 'empty_cell'){
-        if(setStoneCnt % 2 == 0) {
-            board[x][y] = 1; // 핑크빈
-            cell.appendChild(pinkbinImg);
-            
+
+    if(isInterrupt == true){
+        board[x][y] = -1 // 방해물
+        let interImg = document.createElement("img");
+        interImg.src = '../images/block/interrupt.png';
+        interImg.style.width="75px";
+        interImg.style.height="75px";
+        let cell = document.getElementById(idText);
+        cell.appendChild(interImg);
+        cell.classList.replace('empty_cell', "fill_cell");
+    }
+    else {
+        // 넣을 이미지 정보 입력
+        let slimeImg = document.createElement("img");
+        let pinkbinImg = document.createElement("img");
+
+        pinkbinImg.src = '../images/block/pinkbin.png';
+        slimeImg.src = '../images/block/slime.png';
+
+        pinkbinImg.style.width="75px";
+        pinkbinImg.style.height="75px";
+        slimeImg.style.width="75px";
+        slimeImg.style.height="75px";
+        // 배열 인덱스 정보 추출
+        
+        
+        let cell = document.getElementById(idText);
+        console.log(cell.classList);    
+        if(cell.classList[0] == 'empty_cell'){
+            if(setStoneCnt % 2 == 0) {
+                board[x][y] = 1; // 핑크빈
+                cell.appendChild(pinkbinImg);
+                
+            }
+            else{
+                board[x][y] = 2; // 슬라임
+                cell.appendChild(slimeImg);
+            }
+            cell.classList.replace('empty_cell', "fill_cell");
+            setStoneCnt ++;
         }
         else{
-            board[x][y] = 2; // 슬라임
-            cell.appendChild(slimeImg);
+            console.log("cell id is: ", cell.classList[0]);
         }
-        cell.classList.replace('empty_cell', "fill_cell");
-        setStoneCnt ++;
-    }
-    else{
-        console.log("cell id is: ", cell.classList[0]);
-    }
 
-    beforecell = {
-        'x' : x + 1,
-        'y' : y + 1
-    };    
+        beforecell = {
+            'x' : x + 1,
+            'y' : y + 1
+        };    
+    }
+    console.log(board);
 }
-
 // 되돌리기 기능
 // 일단 한번만 되돌리기 가능하게끔.
 // 오류 버튼을 두번 눌러야만 실행이 된다..?
@@ -147,12 +166,14 @@ function revertButton() {
     // 돌 개수 카운트를 1 줄이고
     setStoneCnt -= 1;    
 }
-
-var board = Array.from(Array(8), () => new Array(8));
-
+var board;
+function reloadPage() {
+    location.reload();
+}
 function makeInitalBoard(image) {    
     
     // ES2015 이후 이러한 방식으로 배열만드는 것을 지원한다고 함. 8*8 배열 생성
+    board = Array.from(Array(8), () => new Array(8));
     
     // 방해물 위치를 기록해두는 5*2 배열 생성성
     var interrupt = Array.from(Array(5), ()=> new Array(2)); 
@@ -187,28 +208,29 @@ function makeInitalBoard(image) {
             let yIndex = parseInt(y / cellHeight);
             if(gray <= 60) {
                 board[xIndex][yIndex] = -1;
-                interrupt[inter_cnt][0] = xIndex;
-                interrupt[inter_cnt++][1] = yIndex;
+                interrupt[inter_cnt][0] = xIndex + 1; // id는 1부터 시작하고 
+                interrupt[inter_cnt++][1] = yIndex + 1; // 배열은 0부터 인덱스시작이니까
             }
 
         }
     }    
+
+    // 방해물 추가
+    for(var x = 0; x < 5; x++ ) {
+        let idText = "cell"+interrupt[x][0]+"_"+interrupt[x][1];
+        setStoneOnBoard(true, idText);
+    }
     
-    setStoneOnBoard('cell4_4');    
-    setStoneOnBoard('cell5_4');
-    setStoneOnBoard('cell5_5');
-    setStoneOnBoard('cell4_5');
+    setStoneOnBoard(false, 'cell4_4');    
+    setStoneOnBoard(false, 'cell5_4');
+    setStoneOnBoard(false, 'cell5_5');
+    setStoneOnBoard(false, 'cell4_5');
 }
-
-let click_cnt = 0;
-
-let pinkbin = '../images/block/pinkbin.png';
-let slime = '../images/block/slime.png';
 function clickBoard() { 
     
     console.log(event.target);
     console.log(event.target.id);
-    setStoneOnBoard(event.target.id);
+    setStoneOnBoard(false, event.target.id);
    
 }
 
