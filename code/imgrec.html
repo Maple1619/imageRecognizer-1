@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Image Recognition</title>
+</head>
+<style>
+    table {
+        border-collapse: collapse; 
+        border-spacing: 0;
+    }
+    td {
+        margin: 0;
+        width: 75px;
+        height: 75px;
+        background-color: aqua;
+        border: 5px solid;  
+    }
+    tr {
+        width: 75px;
+        height: 75px;
+    }
+</style>
+<body>
+    <div class="inputImgByUser" style="display: flex; border: 2px solid black;">
+        
+        <img id="imageSrc" alt="No Image" />
+        <div class="caption"> imageSrc <input type="file" id="imgInput" name="file" /></div>
+        <canvas id="canvas"></canvas>
+        <canvas id="canvas2"></canvas>
+        <div class="caption">canvasOutput</div>
+        
+    </div>  
+    <!-- <canvas id="gray"></canvas>
+    <canvas id="blur"></canvas>
+    <canvas id="threshold"></canvas>
+    <canvas id="kernal"></canvas>
+    <canvas id="crop"></canvas>  -->
+
+    <div id="board" align="center">
+        <table>
+            <tbody>
+                <tr>
+                    <th></th>
+                    <th>a</th>
+                    <th>b</th>
+                    <th>c</th>
+                    <th>d</th>
+                    <th>e</th>
+                    <th>f</th>
+                    <th>g</th>
+                    <th>h</th>
+                </tr>
+                <tr>
+                    <th>1</th>
+                    <td class="empty_cell" id="cell1_1" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell1_2" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell1_3" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell1_4" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell1_5" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell1_6" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell1_7" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell1_8" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>2</th>
+                    <td class="empty_cell" id="cell2_1" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell2_2" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell2_3" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell2_4" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell2_5" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell2_6" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell2_7" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell2_8" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>3</th>
+                    <td class="empty_cell" id="cell3_1" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell3_2" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell3_3" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell3_4" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell3_5" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell3_6" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell3_7" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell3_8" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>4</th>
+                    <td class="empty_cell" id="cell4_1" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell4_2" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell4_3" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell4_4" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell4_5" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell4_6" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell4_7" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell4_8" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>5</th>
+                    <td class="empty_cell" id="cell5_1" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell5_2" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell5_3" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell5_4" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell5_5" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell5_6" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell5_7" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell5_8" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>6</th>
+                    <td class="empty_cell" id="cell6_1" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell6_2" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell6_3" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell6_4" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell6_5" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell6_6" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell6_7" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell6_8" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>7</th>
+                    <td class="empty_cell" id="cell7_1" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell7_2" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell7_3" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell7_4" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell7_5" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell7_6" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell7_7" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell7_8" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>8</th>
+                    <td class="empty_cell" id="cell8_1" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell8_2" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell8_3" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell8_4" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell8_5" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell8_6" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell8_7" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                    <td class="empty_cell" id="cell8_8" onclick="clickBoard()">
+                        <span class="disc"></span>
+                    </td>
+                </tr>
+            
+            </tbody>
+        </table>
+    </div>
+    <button id="revertBtn" onclick="revertButton()">되돌리기</button>
+    <button id="reloadBtn" onclick="reloadPage()">게임 새로 시작하기</button>
+    <script src="imgrec.js" type="text/javascript"></script>
+    <script async src="opencv.js" type="text/javascript"></script>
+</body>
+</html>
