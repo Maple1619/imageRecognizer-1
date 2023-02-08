@@ -1,13 +1,23 @@
 // 사용자가 이미지 파일을 등록하면 이미지 속성으로 값을 가져온다. 
+// case 1
 let imgElement = document.getElementById('imageSrc');
 let inputElement = document.getElementById('imgInput');
 inputElement.addEventListener('change', (e) => {
     imgElement.src = URL.createObjectURL(e.target.files[0]);
 }, false);
 
+// window + shift + s로 이미지 캡쳐 -> ctrlv 로 복붙
+// case 2
+window.addEventListener("paste", function(e) {
+    let item = Array.from(e.clipboardData.items).find(x => /^image\//.test(x.type));
+    let blob = item.getAsFile();
+
+    imgElement.src = URL.createObjectURL(blob);
+})
+
 // 파일 올리면 이미지 경로 획득 -> 이미지가 로드 되면
 imgElement.addEventListener('load', imgRec);
-imgElement.addEventListener('change', imgRec);
+// imgElement.addEventListener('change', imgRec);
 function imgRec() {
     
     // 이미지 읽어오기
@@ -148,24 +158,22 @@ function setStoneOnBoard(isInterrupt, idText) {
             console.log("cell id is: ", cell.classList[0]);
         }
 
-        beforecell = {
-            'x' : x + 1,
-            'y' : y + 1
-        };    
+        beforecell = document.getElementById('cell'+(x+1)+'_'+(y+1)); 
     }
-    console.log(board);
 }
 // 되돌리기 기능
 // 일단 한번만 되돌리기 가능하게끔.
 // 오류 버튼을 두번 눌러야만 실행이 된다..?
-function revertButton() {
-    let cellId = "cell"+beforecell['x']+"_"+beforecell['y'];
-    let cell = document.getElementById(cellId);
-    cell.removeChild(cell.childNodes[2]);
-    cell.classList.replace("fill_cell", "empty_cell");
+$(document).on("click","#revertBtn",()=>{
+    beforecell.removeChild(beforecell.childNodes[2]);
+    console.log("되돌리기 완료.");
+    beforecell.classList.replace("fill_cell", "empty_cell");
+    console.log(beforecell.childNodes);
     // 돌 개수 카운트를 1 줄이고
-    setStoneCnt -= 1;    
-}
+    setStoneCnt -= 1;   
+});
+     
+
 var board;
 function reloadPage() {
     location.reload();
@@ -187,10 +195,10 @@ function makeInitalBoard(image) {
     board[4][4] = 1;
     
 
-    var height = image.cols;
-    var width = image.rows;
-    var cellHeight = height / 8;
-    var cellWidth = width / 8;
+    let height = image.cols;
+    let width = image.rows;
+    let cellHeight = height / 8;
+    let cellWidth = width / 8;
     
     let gray = new cv.Mat();
     cv.cvtColor(image, gray, cv.COLOR_BGR2GRAY, 0);
