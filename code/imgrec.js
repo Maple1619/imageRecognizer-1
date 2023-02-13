@@ -1,13 +1,5 @@
-// 사용자가 이미지 파일을 등록하면 이미지 속성으로 값을 가져온다. 
-// case 1
-let imgElement = document.getElementById('imageSrc');
-let inputElement = document.getElementById('imgInput');
-inputElement.addEventListener('change', (e) => {
-    imgElement.src = URL.createObjectURL(e.target.files[0]);
-}, false);
-
-// window + shift + s로 이미지 캡쳐 -> ctrlv 로 복붙
-// case 2
+// 수정 1 : html 에 file 입력하는 칸을 사라지게 하면서 이전 코드 삭제함.
+let imgElement = new Image();
 window.addEventListener("paste", function(e) {
     let item = Array.from(e.clipboardData.items).find(x => /^image\//.test(x.type));
     let blob = item.getAsFile();
@@ -22,7 +14,7 @@ function imgRec() {
     
     // 이미지 읽어오기
     let image = cv.imread(imgElement);
-    cv.imshow('canvas', image);
+    // cv.imshow('canvas', image);
 
     // 원본 이미지를 복사해둔다. copy() -> clone()
     let original = image.clone();
@@ -165,13 +157,19 @@ function setStoneOnBoard(isInterrupt, idText) {
 // 일단 한번만 되돌리기 가능하게끔.
 // 오류 버튼을 두번 눌러야만 실행이 된다..?
 $(document).on("click","#revertBtn",()=>{
-    beforecell.removeChild(beforecell.childNodes[2]);
-    console.log("되돌리기 완료.");
+
     beforecell.classList.replace("fill_cell", "empty_cell");
+    click2error(beforecell.removeChild(beforecell.childNodes[2]));
     console.log(beforecell.childNodes);
     // 돌 개수 카운트를 1 줄이고
     setStoneCnt -= 1;   
 });
+
+function click2error(clickCell) {    
+    beforecell.removeChild(beforecell.childNodes[2]);
+    console.log(clickCell, "되돌리기 완료.");
+    
+}
      
 
 var board;
@@ -242,3 +240,18 @@ function clickBoard() {
    
 }
 
+// 체크박스는 하나만 선택할 수 있도록 하기 위함.
+// id로 받으면 중복체크가 되지만 name으로 받으면 실행이된다.
+// id로 받으면 forEach가 실행이 안된다. 왜일까.?
+// id는 document 내에서 하나만 카리킨다.
+// name은 중복해서 가리키기에 foreach를 사용할 수 있다. 
+// id, name 모두 html element 식별자이다.
+function checkOnlyOne(element) {
+    const checkboxes = document.getElementsByName("pickOrder");
+  
+  checkboxes.forEach((cb) => {
+    cb.checked = false;
+  })
+  
+  element.checked = true;
+}
